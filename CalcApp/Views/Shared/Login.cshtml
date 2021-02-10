@@ -14,12 +14,11 @@
 
 @model CalcApp.Models.LoginModel
     <div class="content">
-        <input type="radio" id=" select" name="auth" checked />
-        <label for="select">Select</label>
-        <input type="radio" id="Login" name="auth" class="Login" onclick="show2();" />
-        <label for="Login">Login</label>
-        <input type="radio" id="SignUp" name="auth" class="SignUp" onclick="show1();" />
-        <label for="SignUp">SignUp</label>
+        Select: 
+            <input type="radio" id="Login" name="auth" class="Login" onclick="show2();" />
+            <label for="Login">Login</label>
+            <input type="radio" id="SignUp" name="auth" class="SignUp" onclick="show1();" />
+            <label for="SignUp">SignUp</label>
         <br />
         <br />
 
@@ -49,7 +48,7 @@
                 <br />
                 <b>PASSWORD(upto 8 characters)</b>
                 <br />
-                @Html.TextBoxFor(model => Model.password)
+                @Html.PasswordFor(model => Model.password)
                 <br />
                 <br />
                 <input type="Submit" name="SignUp" value="Sign up" onclick="location.href = '@Url.Action("SignUp", "CalcAppControllerClass")'" />
@@ -72,7 +71,7 @@
                 <br />
                 <b>PASSWORD</b>
                 <br />
-                @Html.TextBoxFor(model => Model.password)
+                @Html.PasswordFor(model => Model.password)
                 <br />
                 <br />
 

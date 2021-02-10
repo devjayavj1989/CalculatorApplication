@@ -20,20 +20,20 @@ namespace CalcApp.Controllers
         public CalcAppControllerClass()
         {
             //numbers testValue = new numbers();
-            
+
         }
         numbers resultValue = new numbers();
-       // bool logintrue = false;
-       
+        // bool logintrue = false;
+
         public ActionResult Index(numbers num)
-        { 
+        {
             try
             {
                 string sessionValue = HttpContext.Session.GetString("Login");
                 resultValue.value = ListResults();
-                if (num.Number != null&& sessionValue=="Yes")
+                if (num.Number != null && sessionValue == "Yes")
                 {
-                   
+
                     List<string> exprList = new List<string>(num.Number.Split('+', '-', '*', '/'));
 
                     if (exprList.Count == 2)
@@ -58,9 +58,9 @@ namespace CalcApp.Controllers
                     }
                     if (resultValue.result != null)
                     {
-                        if (System.IO.File.Exists("Result.txt"))
+                        if (System.IO.File.Exists("./result.txt"))
                         {
-                            using (StreamWriter writer = new StreamWriter("Result.txt", true))
+                            using (StreamWriter writer = new StreamWriter("./result.txt", true))
                             {
                                 writer.WriteLine();
 
@@ -69,9 +69,8 @@ namespace CalcApp.Controllers
                         }
                         else
                         {
-                            System.IO.File.Create("Result.txt");
 
-                            System.IO.File.WriteAllText("Result.txt", num.Number);
+                            System.IO.File.WriteAllText("./result.txt", num.Number);
 
                         }
                     }
@@ -80,17 +79,17 @@ namespace CalcApp.Controllers
 
                 return View(resultValue);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ViewBag.error = ex;
                 return View("Login");
             }
         }
 
-      public string Add(List<string> Qlist)
+        public string Add(List<string> Qlist)
         {
             double val1 = 0;
-            for(int i = 0; i < Qlist.Count; i++)
+            for (int i = 0; i < Qlist.Count; i++)
             {
                 val1 += Convert.ToDouble(Qlist[i]);
             }
@@ -99,24 +98,25 @@ namespace CalcApp.Controllers
         public string Subtract(List<string> Qlist)
         {
             double val1 = 0;
-            
+
             for (int i = 0; i < Qlist.Count; i++)
-            { if(i==0)
-                val1 =Convert.ToDouble(Qlist[i])-val1;
-            else val1 -= Convert.ToDouble(Qlist[i]);
+            {
+                if (i == 0)
+                    val1 = Convert.ToDouble(Qlist[i]) - val1;
+                else val1 -= Convert.ToDouble(Qlist[i]);
             }
             return val1.ToString();
         }
         public string Multiplication(List<string> Qlist)
         {
             double val1 = 0;
-            for (int i = 0; i < Qlist.Count-1; i++)
+            for (int i = 0; i < Qlist.Count - 1; i++)
             {
                 if (val1 == 0)
                 {
                     val1 = Convert.ToDouble(Qlist[0]);
                 }
-                val1 = val1 * Convert.ToDouble(Qlist[i+1]);
+                val1 = val1 * Convert.ToDouble(Qlist[i + 1]);
             }
             return val1.ToString();
         }
@@ -129,33 +129,41 @@ namespace CalcApp.Controllers
                 if (val1 == 0)
                 {
 
-                    val1 = Convert.ToInt32(Qlist[0]);
+                    val1 = Convert.ToDouble(Qlist[0]);
                 }
-                val1 = val1 / Convert.ToInt32(Qlist[i + 1]);
+                val1 = val1 / Convert.ToDouble(Qlist[i + 1]);
             }
             return val1.ToString();
         }
-        
+
         public bool CheckLogin(LoginModel loginValue)
         {
             try
             {
+                string lgText = loginValue.Username + " " + loginValue.password;
                 if (loginValue.Username == null)
                 {
                     return false;
                 }
-                if (System.IO.File.Exists("login.txt"))
+
+                if (System.IO.File.Exists("./login.txt"))
                 {
-                    string lgText = loginValue.Username + " " + loginValue.password;
-                    var UserValue = System.IO.File.ReadAllLines("login.txt");
+
+                    var UserValue = System.IO.File.ReadAllLines("./login.txt");
+
                     foreach (string line in UserValue)
                     {
                         if (line.Contains(lgText))
                         {
-                            
                             return true;
                         }
                     }
+                }
+                else
+                {
+                    //System.IO.File.Create("./login.txt");
+                    System.IO.File.WriteAllText("./login.txt", lgText);              
+                    return true;
                 }
 
 
@@ -163,7 +171,7 @@ namespace CalcApp.Controllers
             }
             catch (Exception ex)
             {
-               ViewBag.error = ex.ToString();
+                ViewBag.error = ex.ToString();
                 return false;
             }
         }
@@ -173,18 +181,18 @@ namespace CalcApp.Controllers
             {
                 if (textMax(val) == false)
                 {
-                   // ViewBag.error = "Please enter 8 characters";
+                    // ViewBag.error = "Please enter 8 characters";
                     return View("Login");
                 }
                 if (val.Username == null)
                 {
-                   // ViewBag.error = "Please enter value";
+                    // ViewBag.error = "Please enter value";
                     return View("Login");
                 }
                 // LoginController lg = new LoginController();
                 if (CheckLogin(val))
                 {
-                   
+
                     ViewBag.error = "Please Login the Username already exists";
                     return View("Login");
 
@@ -192,9 +200,9 @@ namespace CalcApp.Controllers
                 else
                 {
                     string lgText = val.Username + " " + val.password;
-                    if (System.IO.File.Exists("login.txt"))
+                    if (System.IO.File.Exists("./login.txt"))
                     {
-                        using (StreamWriter writer = new StreamWriter("login.txt", true))
+                        using (StreamWriter writer = new StreamWriter("./login.txt", true))
                         {
                             writer.WriteLine();
                             writer.Write(lgText);
@@ -231,13 +239,13 @@ namespace CalcApp.Controllers
                 if (CheckLogin(val))
                 {
 
-                    HttpContext.Session.SetString("Login", "Yes"); 
+                    HttpContext.Session.SetString("Login", "Yes");
                     return RedirectToAction("Index", "CalcAppControllerClass");
 
                 }
                 else
                 {
-                   
+
                     ViewBag.error = "Please Check ,Username/password incorrect";
                     return View("Login");
                 };
@@ -254,40 +262,40 @@ namespace CalcApp.Controllers
         {
             numbers num1 = new numbers();
             num1.value = new List<string>();
-            if (System.IO.File.Exists("Result.txt"))
+            if (System.IO.File.Exists("./result.txt"))
 
             {
-                var listTemp = System.IO.File.ReadAllLines("Result.txt");
+                var listTemp = System.IO.File.ReadAllLines("./result.txt");
                 List<string> resultStack = new List<string>(listTemp.ToList());
                 if (resultStack.Count > 10)
                 {
-                    for (int i = resultStack.Count-1; i >resultStack.Count - 10; i--)
+                    for (int i = resultStack.Count - 1; i > resultStack.Count - 10; i--)
                     {
                         num1.value.Add(resultStack[i].ToString());
                     }
                 }
                 else
                 {
-                    for (int i = resultStack.Count-1; i >= 0; i--)
+                    for (int i = resultStack.Count - 1; i >= 0; i--)
                     {
                         num1.value.Add(resultStack.ElementAt(i).ToString());
                     }
                 }
             }
-           
+
             return num1.value;
-            
+
         }
 
         public bool textMax(LoginModel m)
         {
-            if((m.Username.Max()<=8)|| (m.password.Max() <= 8)){
+            if ((m.Username.Max() <= 8) || (m.password.Max() <= 8))
+            {
                 return false;
             }
             return true;
         }
 
-        }
-
     }
-        
+
+}
