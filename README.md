@@ -7,6 +7,10 @@ Use git clone using ssh or https to clone the repo to your local
 
 ## Prerequisite
 Uses docker to run. Please install docker following the documentation here: https://docs.docker.com/desktop/
+Verify if docker is installed successfull by running the below command
+```
+docker --version
+```
 
 ## How to run? 
 
@@ -16,7 +20,7 @@ docker build -t calc-app .
 ```
 ### Run docker image
 ```
-docker -run -dp 8080:5000 calc-app
+docker run -dp 8080:5000 calc-app
 ```
 
 ### Launch app
